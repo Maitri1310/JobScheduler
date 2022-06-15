@@ -24,9 +24,9 @@ func main() {
 
 	router := mux.NewRouter().StrictSlash(true)
 	initRoute(router)
+	fmt.Printf("Starting server at port 8080\n")
+	http.ListenAndServe(":8080", router)
 
-	log.Fatal(http.ListenAndServe(":8080", router))
-	fmt.Printf("Started server at port 8080\n")
 }
 
 func initDB() {
