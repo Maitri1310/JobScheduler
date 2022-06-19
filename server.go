@@ -24,6 +24,7 @@ func main() {
 
 	router := mux.NewRouter().StrictSlash(true)
 	initRoute(router)
+	database.InitialiseRedisWorker()
 	fmt.Printf("Starting server at port 8080\n")
 	http.ListenAndServe(":8080", router)
 
