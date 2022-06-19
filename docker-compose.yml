@@ -1,0 +1,34 @@
+version: "3.7"
+
+services:
+  mysql:
+    image: mysql:8.0
+    ports:
+      - "8000:3306"
+    volumes:
+      - ./data/mysql:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: "kkkkk"
+
+  #mongo:
+    #image: mongo:latest
+    #ports:
+    #  - "27017:27017"
+    #volumes:
+    #  - ./data/mongo:/data/db
+
+  #cassandra:
+    #image: cassandra:4.0
+    #ports:
+    #  -"9042:9042"
+    #volumes:
+    #  - ./data/cassandra:/var/lib/cassandra
+    #environment:
+    #  - CASSANDRA_CLUSTER_NAME=citizix
+
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./data/redis:/data
