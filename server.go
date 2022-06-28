@@ -4,6 +4,7 @@ import (
 	"JobScheduler/Server/controller"
 	"JobScheduler/Server/database"
 	"JobScheduler/Server/model"
+	"JobScheduler/Server/scheduler"
 	"fmt"
 	"log"
 	"net/http"
@@ -15,6 +16,7 @@ import (
 )
 
 func main() {
+	defer database.Session.Close()
 	err := godotenv.Load(".env")
 
 	if err != nil {
@@ -25,6 +27,8 @@ func main() {
 	router := mux.NewRouter().StrictSlash(true)
 	initRoute(router)
 	database.InitialiseRedisWorker()
+	database.CreateConnection()
+	go scheduler.Scheduler()
 	fmt.Printf("Starting server at port 8080\n")
 	http.ListenAndServe(":8080", router)
 

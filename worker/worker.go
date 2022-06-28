@@ -4,8 +4,6 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-
-	"github.com/gocraft/work"
 )
 
 type Context struct {
@@ -28,13 +26,13 @@ func ProceessJob(webhook string) {
 
 }
 
-func (c *Context) TakeJob(job *work.Job) error {
-	webhook := job.ArgString("webhook")
-	if err := job.ArgError(); err != nil {
-		return err
-	}
+// func (c *Context) TakeJob(job *work.Job) error {
+// 	webhook := job.ArgString("webhook")
+// 	if err := job.ArgError(); err != nil {
+// 		return err
+// 	}
 
-	go ProceessJob(webhook)
+// 	go ProceessJob(webhook)
 
-	return nil
-}
+// 	return nil
+// }
