@@ -11,7 +11,7 @@ import (
 )
 
 // Make a redis pool
-var redisPool = &redis.Pool{
+var RedisPool = &redis.Pool{
 	MaxActive: 5,
 	MaxIdle:   5,
 	Wait:      true,
@@ -25,7 +25,7 @@ type Context struct {
 }
 
 func InitialiseRedisWorker() {
-	pool := work.NewWorkerPool(Context{}, 10, "my_app_namespace", redisPool)
+	pool := work.NewWorkerPool(Context{}, 10, "job_scheduler", RedisPool)
 
 	// Add middleware that will be executed for each job
 	pool.Middleware((*Context).Log)
