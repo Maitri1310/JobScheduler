@@ -22,19 +22,21 @@ func main() {
 	if err != nil {
 		log.Fatalf("Error loading .env file")
 	}
-	initDB()
+	initMysqlDB()
 
 	router := mux.NewRouter().StrictSlash(true)
 	initRoute(router)
-	database.InitialiseRedisWorker()
-	database.CreateConnection()
+	// go database.InitialiseRedisWorker()
+	database.CreateCassandraConnection()
 	go scheduler.Scheduler()
 	fmt.Printf("Starting server at port 8080\n")
-	http.ListenAndServe(":8080", router)
+	if err := http.ListenAndServe(":8080", router); err != nil {
+		log.Fatal(err)
+	}
 
 }
 
-func initDB() {
+func initMysqlDB() {
 	config := database.Config{
 		Host:     os.Getenv("HOST"),
 		User:     os.Getenv("USER"),

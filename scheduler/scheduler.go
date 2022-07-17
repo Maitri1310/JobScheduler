@@ -4,6 +4,7 @@ import (
 	"JobScheduler/Server/database"
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/gocraft/work"
 )
@@ -19,12 +20,11 @@ func EnqueueJob(webhook string) {
 
 func Scheduler() {
 	fmt.Println("Starting scheduler")
-	//for {
-	//time.Sleep(5 * time.Second)
-	fmt.Println("5Sec passed")
-	go GetJobs()
-	//}
 
+	for tick := range time.Tick(3 * time.Second) {
+		fmt.Println("5Sec passed", tick)
+		go GetJobs()
+	}
 }
 
 func IterateOverJobs() {
