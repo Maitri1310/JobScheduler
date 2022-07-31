@@ -1,0 +1,39 @@
+go mod init JobScheduler/Server
+go run server.go
+
+
+https://gorm.io/docs/delete.html
+https://notes.shichao.io/gopl/ch8/#:~:text=If%20goroutines%20are%20the%20activities,called%20the%20channel's%20element%20type
+
+https://github.com/gocraft/work
+
+
+docker-compose up -d
+
+docker ps
+
+
+
+docker exec -it (container id) redis-cli
+docker exec -it (container id) cqlsh -u cassandra -p cassandra
+docker system prune- removes all cntainers and images from docker 
+
+docker-compose up -d
+docker exec -it <containerId> mysql -u root -p
+docker exec -it <containerId> redis-cli
+docker exec -it <containerId> cqlsh -u cassandra -p cassandra
+
+docket images are immutable , if we want to add a new image to container , remove the whiel container and build agaain44
+
+
+https://golangdocs.com/golang-cassandra-example
+
+https://hub.docker.com/r/bitnami/cassandra/
+
+create keyspace example with replication = { 'class' : 'SimpleStrategy', 'replication_factor' : 1 };
+create table example.tweet(timeline text, id UUID, text text, PRIMARY KEY(id));
+create index on example.tweet(timeline);
+https://docs.datastax.com/en/cql-oss/3.3/cql/cql_reference/timeuuid_functions_r.html
+
+create keyspace job_scheduler with replication = { 'class' : 'SimpleStrategy', 'replication_factor' : 1 };
+create table job_scheduler.jobPool(interval bigint, nextRunTime bigint, jobId text, webhook text, PRIMARY KEY(nextRunTime, jobId));

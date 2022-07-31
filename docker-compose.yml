@@ -17,14 +17,14 @@ services:
     #volumes:
     #  - ./data/mongo:/data/db
 
-  #cassandra:
-    #image: cassandra:4.0
-    #ports:
-    #  -"9042:9042"
-    #volumes:
-    #  - ./data/cassandra:/var/lib/cassandra
-    #environment:
-    #  - CASSANDRA_CLUSTER_NAME=citizix
+  cassandra:
+    image: cassandra:4.0
+    ports:
+      - 9042:9042
+    volumes:
+      - ./data/cassandra:/var/lib/cassandra
+    environment:
+      - CASSANDRA_CLUSTER_NAME=citizix
 
   redis:
     image: redis:alpine
