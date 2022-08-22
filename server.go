@@ -39,7 +39,7 @@ func main() {
 func initMysqlDB() {
 	config := database.Config{
 		Host:     os.Getenv("HOST"),
-		User:     os.Getenv("USER"),
+		User:     os.Getenv("MYSQLUSER"),
 		Password: os.Getenv("PASSWORD"),
 		DB:       os.Getenv("DB"),
 	}

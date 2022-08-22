@@ -31,5 +31,4 @@ func Connect(config Config) error {
 func Migrate(table *model.Job) {
 	Connector.AutoMigrate(&table)
 	log.Println("Table migrated")
-
 }

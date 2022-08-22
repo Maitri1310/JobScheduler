@@ -3,6 +3,7 @@ module JobScheduler/Server
 go 1.18
 
 require (
+	github.com/gomodule/redigo v1.8.8
 	github.com/google/uuid v1.3.0
 	github.com/gorilla/mux v1.8.0
 	github.com/jinzhu/gorm v1.9.16
@@ -10,7 +11,6 @@ require (
 
 require (
 	github.com/golang/snappy v0.0.3 // indirect
-	github.com/gomodule/redigo v1.8.8 // indirect
 	github.com/hailocab/go-hostpool v0.0.0-20160125115350-e80d13ce29ed // indirect
 	github.com/robfig/cron v1.2.0 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect

@@ -25,7 +25,7 @@ type Context struct {
 }
 
 func InitialiseRedisWorker() {
-	pool := work.NewWorkerPool(Context{}, 10, "job_scheduler", RedisPool)
+	pool := work.NewWorkerPool(Context{}, 1, "job_scheduler", RedisPool)
 
 	// Add middleware that will be executed for each job
 	pool.Middleware((*Context).Log)
