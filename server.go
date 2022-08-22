@@ -33,7 +33,7 @@ func main() {
 	if err := http.ListenAndServe(":8080", router); err != nil {
 		log.Fatal(err)
 	}
-
+	fmt.Println("exited from main")
 }
 
 func initMysqlDB() {

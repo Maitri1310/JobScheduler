@@ -6,23 +6,21 @@ import (
 	"net/http"
 )
 
-type Context struct {
-	customerID int64
-}
-
 func ProceessJob(webhook string) {
 	res, err := http.Get(webhook)
 	if err != nil {
 		log.Println(err)
+		return
 	}
 
 	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
 		log.Println(err)
+		return
 	}
 	//Convert the body to type string
 	sb := string(body)
-	log.Printf(sb)
+	log.Println(sb)
 
 }
 

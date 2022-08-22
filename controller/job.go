@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
@@ -25,6 +26,10 @@ func CreateJob(w http.ResponseWriter, r *http.Request) {
 	job.Id = uuid.New().String()
 
 	database.Connector.Create(job)
+	now := time.Now()
+
+	database.Session.Query(`INSERT INTO job_scheduler.jobPool (interval, nextRunTime, jobId, webhook) VALUES (?, ?, ?, ?)`, job.Cron, now.Unix(), job.Id, job.Webhook).Exec()
+
 	w.Header().Set("content-type", "application/json")
 	w.WriteHeader(http.StatusOK)
 
@@ -48,6 +53,8 @@ func DeleteJob(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
+
+	database.Session.Query(`DELETE FROM job_scheduler.jobPool WHERE jobId = ?`, id)
 	w.Header().Set("content-type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(deleteResponse{Id: id})

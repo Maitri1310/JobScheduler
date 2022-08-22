@@ -50,19 +50,18 @@ func Scheduler() {
 	// return
 }
 
-func IterateOverJobs() {
-
-}
-
 func GetJobs() {
 	var webhook string
 	var nextRunTime int32
 	var interval int32
 	var jobId string
 
-	iter := database.Session.Query(`SELECT webhook, nextRunTime, interval, jobId FROM jobPool WHERE nextRunTime <= toTimestamp(now()) ALLOW FILTERING`).Iter()
+	currentTime := time.Now().Unix()
+
+	iter := database.Session.Query(`SELECT webhook, nextRunTime, interval, jobId FROM jobPool WHERE nextRunTime <= ? ALLOW FILTERING`, currentTime).Iter()
 	for iter.Scan(&webhook, &nextRunTime, &interval, &jobId) {
-		fmt.Println("Tweet:", webhook, nextRunTime, interval, jobId)
+		fmt.Println("Job:", webhook, nextRunTime, interval, jobId)
+		fmt.Println("Current Time", time.Now().Unix())
 		go UpdateJob(jobId, nextRunTime, interval)
 		go EnqueueJob(webhook)
 	}
@@ -72,10 +71,10 @@ func GetJobs() {
 }
 
 func UpdateJob(jobid string, nextRuntime int32, interval int32) {
+	newNextRunTime := nextRuntime + interval
 
-	err := database.Session.Query(`UPDATE job_scheduler.jobPool SET nextRuntime=?+? where jobId=?`, nextRuntime, interval, jobid).Exec()
+	err := database.Session.Query(`UPDATE job_scheduler.jobPool SET nextRuntime=? where jobId=?`, newNextRunTime, jobid).Exec()
 	if err != nil {
 		log.Fatal(err)
 	}
-
 }

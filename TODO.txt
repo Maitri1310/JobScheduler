@@ -1,0 +1,2 @@
+- Figure out why Scheduler and RedisWorker are not running in parallel
+- Figure out most efficient way of writing cassendra queries (ALLOW FILTERING)
