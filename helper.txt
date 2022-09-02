@@ -38,7 +38,7 @@ https://docs.datastax.com/en/cql-oss/3.3/cql/cql_reference/timeuuid_functions_r.
 create keyspace job_scheduler with replication = { 'class' : 'SimpleStrategy', 'replication_factor' : 1 };
 create table job_scheduler.jobPool(interval bigint, nextRunTime bigint, jobId text, webhook text, PRIMARY KEY(nextRunTime, jobId));
 
-
+create table job_scheduler.jobPool(interval bigint, nextRunTime bigint, jobId text, webhook text, PRIMARY KEY(jobId));
 mysql
 create database job_scheduler;
 create table jobs (id varchar(255), name varchar(255), webhook varchar(255), cron varchar(255));

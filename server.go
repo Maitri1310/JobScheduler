@@ -5,35 +5,64 @@ import (
 	"JobScheduler/Server/database"
 	"JobScheduler/Server/model"
 	"JobScheduler/Server/scheduler"
+	"context"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
+	"os/signal"
+	"sync"
+	"syscall"
 
 	"github.com/gorilla/mux"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	"github.com/joho/godotenv"
 )
 
+func closeServer(wg sync.WaitGroup, ctx context.Context, server *http.Server) {
+	defer wg.Done()
+	<-ctx.Done()
+	log.Println("Closing HTTP Server")
+	if err := server.Shutdown(context.Background()); err != nil {
+		log.Fatal(err)
+	}
+}
+func createServer(wg sync.WaitGroup, server *http.Server) {
+	defer wg.Done()
+	fmt.Printf("Starting server at port 8080\n")
+	if err := server.ListenAndServe(); err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("Server started")
+}
 func main() {
 	defer database.Session.Close()
-	err := godotenv.Load(".env")
 
+	err := godotenv.Load(".env")
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	defer stop()
+	var wg sync.WaitGroup
+	wg.Add(4)
 	if err != nil {
 		log.Fatalf("Error loading .env file")
 	}
 	initMysqlDB()
 
-	router := mux.NewRouter().StrictSlash(true)
-	initRoute(router)
-	// go database.InitialiseRedisWorker()
 	database.CreateCassandraConnection()
-	go scheduler.Scheduler()
-	fmt.Printf("Starting server at port 8080\n")
-	if err := http.ListenAndServe(":8080", router); err != nil {
-		log.Fatal(err)
+	go scheduler.Scheduler(wg, ctx)
+	go database.InitialiseRedisWorker(wg, ctx)
+	router := mux.NewRouter().StrictSlash(true)
+
+	initRoute(router)
+
+	server := &http.Server{
+		Addr:    ":8080",
+		Handler: router,
 	}
-	fmt.Println("exited from main")
+	go createServer(wg, server)
+
+	go closeServer(wg, ctx, server)
+	wg.Wait()
 }
 
 func initMysqlDB() {
@@ -46,6 +75,7 @@ func initMysqlDB() {
 
 	err := database.Connect(config)
 	if err != nil {
+		log.Fatal(err)
 		panic(err.Error())
 	}
 

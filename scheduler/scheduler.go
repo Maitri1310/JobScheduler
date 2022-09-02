@@ -2,8 +2,10 @@ package scheduler
 
 import (
 	"JobScheduler/Server/database"
+	"context"
 	"fmt"
 	"log"
+	"sync"
 	"time"
 
 	"github.com/gocraft/work"
@@ -19,7 +21,8 @@ func EnqueueJob(webhook string) {
 
 }
 
-func Scheduler() {
+func Scheduler(wg sync.WaitGroup, ctx context.Context) {
+	defer wg.Done()
 	fmt.Println("Starting scheduler")
 	// signalChan := make(chan os.Signal, 1)
 	// signal.Notify(signalChan, os.Interrupt, os.Kill)
@@ -40,9 +43,20 @@ func Scheduler() {
 	// 		// checkSomething() isn't done yet, but it didn't fail either, let's try again
 	// 	}
 	// }
-	for tick := range time.Tick(5 * time.Second) {
-		fmt.Println("60 sec passed", tick)
-		go GetJobs()
+	// for tick := range time.Tick(5 * time.Second) {
+	// 	fmt.Println("60 sec passed", tick)
+	// 	go GetJobs()
+	// }
+	clock := time.NewTicker(60 * time.Second)
+	for {
+		select {
+		case tm := <-clock.C:
+			fmt.Println("time", tm)
+			go GetJobs()
+		case <-ctx.Done():
+			fmt.Println("Closing the scheduler")
+			return
+		}
 	}
 	// close(signalChan)
 	// ticker.Stop()

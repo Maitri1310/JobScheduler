@@ -2,9 +2,9 @@ package database
 
 import (
 	"JobScheduler/Server/worker"
+	"context"
 	"fmt"
-	"os"
-	"os/signal"
+	"sync"
 
 	"github.com/gocraft/work"
 	"github.com/gomodule/redigo/redis"
@@ -24,7 +24,9 @@ type Context struct {
 	customerID int64
 }
 
-func InitialiseRedisWorker() {
+func InitialiseRedisWorker(wg sync.WaitGroup, ctx context.Context) {
+	defer wg.Done()
+	fmt.Println("worker started")
 	pool := work.NewWorkerPool(Context{}, 1, "job_scheduler", RedisPool)
 
 	// Add middleware that will be executed for each job
@@ -40,10 +42,11 @@ func InitialiseRedisWorker() {
 	pool.Start()
 
 	// Wait for a signal to quit:
-	signalChan := make(chan os.Signal, 1)
-	signal.Notify(signalChan, os.Interrupt, os.Kill)
-	<-signalChan
-
+	//signalChan := make(chan os.Signal, 1)
+	//signal.Notify(signalChan, os.Interrupt, os.Kill)
+	<-ctx.Done()
+	//<-signalChan
+	fmt.Println("Exiting redis worker")
 	// Stop the pool
 	pool.Stop()
 }
